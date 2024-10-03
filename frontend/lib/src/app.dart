@@ -12,7 +12,7 @@ import 'diary/diary_detail_screen.dart'; // 일기 작성/수정 화면
 import 'diary/diary_model.dart'; // 프로젝트 경로에 맞게 수정
 
 class MyApp extends StatelessWidget {
-  const MyApp({
+  MyApp({
     super.key,
     required this.settingsController,
   });
@@ -26,7 +26,6 @@ class MyApp extends StatelessWidget {
       builder: (BuildContext context, Widget? child) {
         return MaterialApp(
           restorationScopeId: 'app',
-
           localizationsDelegates: const [
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
@@ -36,15 +35,12 @@ class MyApp extends StatelessWidget {
           supportedLocales: const [
             Locale('en', ''), // English, no country code
           ],
-
           onGenerateTitle: (BuildContext context) =>
               AppLocalizations.of(context)!.appTitle,
-
           theme: ThemeData(),
           darkTheme: ThemeData.dark(),
           themeMode: settingsController.themeMode,
           initialRoute: DiaryListScreen.routeName,
-
           onGenerateRoute: (RouteSettings routeSettings) {
             return MaterialPageRoute<void>(
               settings: routeSettings,
@@ -63,12 +59,15 @@ class MyApp extends StatelessWidget {
                   case AddDiaryScreen.routeName:
                     return const AddDiaryScreen();
                   // 새로운 일기 화면 추가
-                  case DiaryListScreen.routeName:  // 일기 목록 화면
+                  case DiaryListScreen.routeName: // 일기 목록 화면
                     return const DiaryListScreen();
                   case DiaryDetailScreen.routeName: // 일기 작성/수정 화면
-                    final entry = routeSettings.arguments as DiaryEntry;
-                    return DiaryDetailScreen(entry: entry);
-
+                    final arguments =
+                        routeSettings.arguments as Map<String, dynamic>;
+                    final entry = arguments['entry'] as DiaryEntry;
+                    final changes =
+                        arguments['changes'] as List<Map<String, dynamic>>;
+                    return DiaryDetailScreen(entry: entry, changes: changes);
                   // 기본적으로 일기 목록 화면을 첫 화면으로 설정
                   default:
                     return const DiaryListScreen();
